@@ -34,6 +34,9 @@ class ChatListener:
     def on_chat_back(self, x: int):
         pass
 
+    def on_chat_dump(self, fname: str):
+        pass
+
     def on_error(self, error: Exception):
         pass
 
@@ -68,6 +71,7 @@ COMMAND_QUIT = (":quit", ":q")
 COMMAND_RERUN = (":rerun", ":r")
 COMMAND_HELP = (":help", ":h", ":?")
 COMMAND_BACK_REGEX = r":b(?:ack)? (\d{1,3})"
+COMMAND_DUMP_REGEX = r":d(?:ump)?(?:\s+(\S+))?"
 ALL_COMMANDS = [*COMMAND_CLEAR, *COMMAND_QUIT, *COMMAND_RERUN, *COMMAND_HELP]
 COMMANDS_HELP = """
 Commands:
@@ -75,6 +79,7 @@ Commands:
 - `:quit` / `:q` / Ctrl+D - Quit the program.
 - `:rerun` / `:r` / Ctrl+R - Re-run the last message.
 - `:back X` / `:b X` - Go back to message X. Does not re-run assistant's response.
+- `:dump FNAME` / `:d FNAME` - Dump messages to dumpster/FNAME. Defaults to "restmul"
 - `:help` / `:h` / `:?` - Show this help message.
 """
 
@@ -157,6 +162,13 @@ class ChatSession:
         self._rollback_user_message(x)
         self.listener.on_chat_back(x)
 
+    def _dump(self, fname: str = 'restmul'):
+        """
+        Dump messages to file fname in a fixed dumpster directory.
+        """
+        self._dump_messages(fname)
+        self.listener.on_chat_dump(fname)
+
     def _rollback_user_message(self, x: int = None):
         if x is None:
             self.messages = self.messages[:-1]
@@ -164,6 +176,12 @@ class ChatSession:
         else:
             self.messages = self.messages[:2*x + 1]
             self.user_prompts = self.user_prompts[:2*x + 1]
+
+    def _dump_messages(self, fname: str):
+        dumpster_path = "/home/fs/code/gpt-cli/dumpster/" + fname
+        with open(dumpster_path, "w") as f:
+            for message in self.messages:
+                f.write(f"----- {message['role']}: -----\n{message['content']}\n\n")
 
     def _print_help(self):
         with self.listener.response_streamer() as stream:
@@ -187,6 +205,10 @@ class ChatSession:
         elif re.match(COMMAND_BACK_REGEX, user_input):
             match = re.match(COMMAND_BACK_REGEX, user_input)
             self._back(int(match.group(1)))
+            return True
+        elif re.match(COMMAND_DUMP_REGEX, user_input):
+            match = re.match(COMMAND_DUMP_REGEX, user_input)
+            self._dump() if match.group(1) is None else self._dump(match.group(1))
             return True
 
         self._add_user_message(user_input)

@@ -20,6 +20,9 @@ class LoggingChatListener(ChatListener):
     def on_chat_back(self, x: int):
         self.logger.info(f"Going back to message pair {x}.")
 
+    def on_chat_dump(self, fname: str):
+        self.logger.info(f"Dumped messages to {fname}.")
+
     def on_error(self, e: Exception):
         self.logger.exception(e)
 

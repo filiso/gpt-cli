@@ -105,6 +105,9 @@ class CLIChatListener(ChatListener):
     def on_chat_back(self, x: int):
         self.console.print(f"[bold]Going back to message pair {x}.[/bold]")
 
+    def on_chat_dump(self, fname: str):
+        self.console.print(f"Dumped messages to [bold]dumpster/{fname}[/bold]")
+
     def on_error(self, e: Exception):
         if isinstance(e, BadRequestError):
             self.console.print(
