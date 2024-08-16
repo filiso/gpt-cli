@@ -25,6 +25,7 @@ TERMINAL_WELCOME = """
 Hi! I'm here to help. Type `:q` or Ctrl-D to exit, `:c` or Ctrl-C and Enter to clear
 the conversation, `:r` or Ctrl-R to re-generate the last response.
 Type `:b X` where X is a message pair number to go back to that message pair.
+Type `:d fname` to dump the current messages into dumpster/fname.
 To enter multi-line mode, enter a backslash `\\` followed by a new line.
 Exit the multi-line mode by pressing ESC and then Enter (Meta+Enter).
 Try `:?` for help.
