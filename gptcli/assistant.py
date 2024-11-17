@@ -27,7 +27,7 @@ class AssistantConfig(TypedDict, total=False):
 
 
 CONFIG_DEFAULTS = {
-    "model": "gpt-3.5-turbo",
+    "model": "gpt-4o",
     "temperature": 0.7,
     "top_p": 1.0,
 }
