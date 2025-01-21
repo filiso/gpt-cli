@@ -178,7 +178,7 @@ class ChatSession:
             self.user_prompts = self.user_prompts[:2*x + 1]
 
     def _dump_messages(self, fname: str):
-        dumpster_path = "/home/fs/code/gpt-cli/dumpster/" + fname
+        dumpster_path = "/home/fs/data/opt_files/gpt-cli/dumpster/" + fname
         with open(dumpster_path, "w") as f:
             for message in self.messages:
                 f.write(f"----- {message['role']}: -----\n{message['content']}\n\n")
